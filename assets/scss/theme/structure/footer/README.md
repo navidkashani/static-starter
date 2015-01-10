@@ -1,4 +1,4 @@
-SCSS Components directory
+SCSS Footer Section directory
 =================
 Use this directory to store *.scss file.
 
