@@ -1,0 +1,19 @@
+{
+  "name": "static-starter",
+  "version": "0.1.0",
+  "homepage": "http://reyhoun.com",
+  "authors": [
+    "Reyhoun Team <info@reyhoun.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "foundation": "^5.4.7",
+    "fontawesome": "^4.2.0"
+  }
+}
