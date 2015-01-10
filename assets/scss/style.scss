@@ -8,11 +8,16 @@
 @import "../vendor/foundation/scss/foundation/functions";
 
 // Reyhoun Functions, Mixins, Helpers and Direction Controller
-// @import "helper/helper";
+@import "helper/helper";
 
 // Import Settings
 // @import "settings/settings";
 
+// Choose Language Direction
+// $text-direction: ltr;
 
 // Import Vendor CSS Files and Frameworks
 @import "vendor";
+
+// Import Theme Styles
+@import "theme/theme";

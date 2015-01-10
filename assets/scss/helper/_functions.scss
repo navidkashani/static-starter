@@ -1,0 +1,602 @@
+//
+// This includes all of the foundation global elements that are needed to work with any of the other files.
+//
+// Mixin & Functions
+//
+
+@function empty($value) {
+    @if $value == '' {
+        @return true;
+    } @else {
+        @return false;
+    }
+}
+
+@function is-null($value) {
+    @if ($value == null) or empty($value) {
+        @return true;
+    }
+    @else {
+        @return false;
+    }
+}
+
+
+// Get typography properties from SassWatcher Typography Field
+// --------------------------------------------------------------------------------
+// @param 
+//     $list values order is: color, repeat, clip, origin, size, attachment, position, image, text-color
+//     $type values is: all, color, repeat, clip, origin, size, attachment, position, image, text-color
+// --------------------------------------------------------------------------------
+// @return [string] // css properties
+// get-typography($s_typo_logo, text-color)
+@function get-typography(
+    $list,
+    $type: all,
+    $font-weight: normal,
+    $font-size: null,
+    $line-height: null,
+    $font-backup: "Helvetica, Helvetica, Arial, sans-serif",
+    $rem: true,
+    $default_text: #000) {
+
+    $types_list:    'all, family, family-backup, weight, backup, align, direction, size, line-height, url, text-color, letter-spacing';
+    $fucntion_name: 'get-typography';
+    $list_length:   10;
+
+    $error-message: 'DEBUG - #{$fucntion_name}():';
+    $error-type:    '#{$error-message} "#{$type}" $type parameter is invalid, for $type value can be use one of these: #{$types_list}'; 
+    $error-null:    '#{$error-message} Input $list have less than #{$list_length} item.';
+    
+    $font-family:   '';
+    $font-style:    'normal';
+    $text-align:    'left';
+    $direction:     'ltr';
+    $font:          '';
+    $color:         #000;
+    $letter-spacing: 0;
+
+    @if (length($list) >= $list_length) {
+        // Font Family Value:
+        $font-family:    nth($list, 1);
+
+        // Font Weight Value:
+        @if (not is-null(nth($list, 2))) {
+            $font-weight: nth($list, 2);
+            @if ($font-weight == 'regular') {
+                $font-weight: 400;
+            }
+        }
+
+        // Font Backup Value:
+        @if (not is-null(nth($list, 3))) {
+            $font-backup: nth($list, 3);
+        }
+        $font-backup: unquote($font-backup);
+
+        // Text Align Value:
+        $text-align:     nth($list, 4);
+
+        // Direction Value:
+        $direction:      nth($list, 5);
+
+        // Color Value:
+        @if (not is-null(nth($list, 9))) {
+            $color:      nth($list, 9);
+        }
+
+        // Font Size Value:
+        @if (not is-null(nth($list, 6))) {
+            @if ($rem) {
+                $font-size: rem-calc(nth($list, 6));
+            } @else {
+                $font-size: nth($list, 6) * 1px;
+            }
+        }
+
+        // Line Height Value:
+        @if (not is-null(nth($list, 7))) {
+            @if ($rem) {
+                $line-height: rem-calc(nth($list, 7));
+            } @else {
+                $line-height: nth($list, 7) * 1px;
+            }
+        }
+
+        // Font Style Value:
+        @if (not is-null(nth($list, 8))) {
+            $font-style: nth($list, 8);
+        }
+
+        $text-color: nth($list, 9);
+        
+        @if (not is-null($text-color)) {
+            $text-color: $text-color;
+        } @else {
+            $text-color: $default_text;
+        }
+        
+        // Letter Spacing
+        $letter-spacing: nth($list, 10);
+
+        @if ($type == all) and ((not is-null($font-family)) or (not is-null($font-backup))) {
+            @if (not is-null($font-style)) {
+                $font: $font + ' ' + $font-style;
+            }
+            @if (not is-null($font-weight)) {
+                $font: $font + ' ' + $font-weight;
+            }
+            @if (not is-null($font-size)) {
+                $font: $font +  ' ' + $font-size;
+                @if (not is-null($line-height)) {
+                    $font: $font + '/' + $line-height;
+                }
+            }
+            @if (not is-null($font-family)) and (not is-null($font-backup)) {
+                $font: unquote('#{$font} "#{$font-family}", #{$font-backup}');
+            } @else if (not is-null($font-family)) {
+                $font: $font + ' ' + $font-family;
+            } @else {
+                $font: $font + ' ' + $font-backup;
+            }
+        } @else if (($type == family) and (not is-null($font-family))) {
+            $font: $font-family;
+        } @else if (($type == backup) and (not is-null($font-backup))) {
+            $font: $font-backup;
+        } @else if ($type == family-backup) {
+            @if (not is-null($font-family)) and (not is-null($font-backup)) {
+                $font: unquote('"#{$font-family}", #{$font-backup}');
+            } @else if (not is-null($font-family)) {
+                $font: $font-family;
+            } @else {
+                $font: $font-backup;
+            }
+        } @else if (($type == weight) and (not is-null($font-weight))) {
+            $font: $font-weight;
+        } @else if (($type == align) and (not is-null($text-align))) {
+            $font: $text-align;
+        } @else if (($type == direction) and (not is-null($direction))) {
+            $font: $direction;
+        } @else if (($type == size) and (not is-null($font-size))) {
+            $font: $font-size;
+        } @else if (($type == style) and (not is-null($font-style))) {
+            $font: $font-style;
+        } @else if (($type == line-height) and (not is-null($line-height))) {
+            $font: $line-height;
+        } @else if (($type == url) and (not is-null($font-family)))  {
+            $font: "http://fonts.googleapis.com/css?family=" + $font-family;
+            @if (not is-null($font-weight)) {
+                $font: $font + ':' + $font-weight;
+            }
+        } @else if (($type == color) and (not is-null($color))) {
+            $font: $color;
+        } @else if (($type == text-color) and (not is-null($text-color))) {
+            $font: $text-color;
+        } @else if ($type == letter-spacing) {
+            $font: $letter-spacing;
+        } @else {
+            // @debug $error-type;
+            $font: $error-type + '. Or your field type is null.';
+        }
+    } @else {
+        // @debug $error-null;
+        $font: $error-null;
+    }
+
+    @return $font;
+}
+
+
+// Get background properties from SassWatcher Background Field
+// --------------------------------------------------------------------------------
+// @param 
+//     $list values order is: color, repeat, clip, origin, size, attachment, position, image
+//     $type values is: all, color, repeat, clip, origin, size, attachment, position, image
+// --------------------------------------------------------------------------------
+// @return [string] // css properties
+// get-background($s_bg_container, color, #fff)
+@function get-background(
+    $list,
+    $type: all,
+    $default_color: transparent,
+    $rem: true,
+    $default_text: #000) {
+    $types_list:    'all, color, repeat, clip, origin, size, attachment, position, image, width, height, text-color';
+    $fucntion_name: 'get-background';
+    $list_length:   11;
+
+    $error-message: 'DEBUG - #{$fucntion_name}():';
+    $error-type:    '#{$error-message} "#{$type}" $type parameter is invalid, for $type value can be use one of these: #{$types_list}'; 
+    $error-null:    '#{$error-message} Input $list have less than #{$list_length} item.';
+
+    $background: $default_color;
+    $color:       null;
+    $repeat:      null;
+    $clip:        null;
+    $origin:      null;
+    $size:        null;
+    $attachment:  null;
+    $position:    null;
+    $image:       null;
+    $width:       null;
+    $height:      null;
+    $text-color:  null;
+
+    @if (length($list) >= $list_length) {
+        
+        $background:  '';
+        $color:       nth($list, 1);
+        $repeat:      nth($list, 2);
+        $clip:        nth($list, 3);
+        $origin:      nth($list, 4);
+        $size:        nth($list, 5);
+        $attachment:  nth($list, 6);
+        $position:    nth($list, 7);
+        $image:       nth($list, 8);
+        
+        @if ($rem) {
+            $width:   rem-calc(nth($list, 9));
+            $height:  rem-calc(nth($list, 10));
+        } @else {
+            $width:   nth($list, 9) * 1px;
+            $height:  nth($list, 10) * 1px;
+        }
+
+        $text-color:  nth($list, 11);
+
+        
+        @if ($color != transparent) or ($image != none) or ($type == text-color)  {
+            @if $type == all {
+                $background: $background + ' ' + $color;
+
+                @if $image != "none" {
+                    $background: $background + ' url("' + $image + '")';
+                    $background: $background + ' ' + $position;
+                    $background: $background + ' / ' + $size;
+                    $background: $background + ' ' + $repeat;
+                    $background: $background + ' ' + $attachment;
+                    $background: $background + ' ' + $origin;
+                    $background: $background + ' ' + $clip;
+                }
+
+            } @else if ($type == color) {
+                @if ($color != transparent) {
+                    $background: $color;
+                } @else {
+                    $background: $default_color;
+                }
+            } @else if ($type == repeat) {
+                $background: $repeat;
+            } @else if ($type == clip) {
+                $background: $clip;
+            } @else if ($type == origin) {
+                $background: $origin;
+            } @else if ($type == size) {
+                @return $type;
+            } @else if ($type == attachment) {
+                $background: $attachment;
+            } @else if ($type == position) {
+                $background: $position;
+            } @else if ($type == image) and (not is-null($image)) {
+                $background: $image;
+            } @else if ($type == height) or ($type == width) {
+                @if (not is-null($image)) and ($image != 'none') {
+                    @if ($type == height) {
+                        $background: $height;
+                    } @else {
+                        $background: $width;
+                    }
+                }
+            }  @else if ($type == text-color) {
+                @if (not is-null($text-color)) {
+                    $background: $text-color;
+                } @else {
+                    $background: $default_text;
+                }
+            } @else {
+                // @debug $error-type;
+                $background: "'" + $error-type + "'";
+            }
+        } @else {
+            $background: $default_color;
+        }
+    } @else {
+        // @debug $error-null;
+        $background: $error-null;
+    }
+    @return unquote($background);
+}
+
+
+// This function check lightnes of background color to return elemnt color on this background
+@function cc($bg, $amount) {
+  @if(lightness($bg) > 50%) {
+    @return darken($bg, $amount);
+  } @else {
+    @return lighten($bg, $amount);
+  } 
+}
+
+
+//
+// This function get two parameter and use Saturate & Lightnes of $main_color to create new color with hue of $custom_color!
+//
+@function use-hue-of-color($main_color, $custom_color) {
+    @return hsl(hue($custom_color), saturation($main_color), lightness($main_color));
+}
+@function use-hue-of-number($main_color, $custom_hue) {
+    @return hsl($custom_hue, saturation($main_color), lightness($main_color));
+}
+
+
+//
+// This mixin return Hue, Saturate and Lightness of a color as form as css.
+//
+@mixin color-data($color) {
+    hue: hue($color);
+    saturation: saturation($color);
+    lightness: lightness($color);
+    // @debug 'hue: '          + hue($color);
+    // @debug 'saturation: '   + saturation($color);
+    // @debug 'lightness: '    + lightness($color);
+}
+
+
+// Usage: Nest Media Queries
+// Example:
+//    .nested-media-queries {
+//        @include bp(small) {
+//            width:50%;
+//        }
+//        @include bp(medium) {
+//            width:25%;
+//        }
+//    }
+//
+@mixin breakpoint($point) {
+    @if $point == small {
+        @media #{$small-only} { @content; }
+    }
+    @else if $point == small-up {
+        @media #{$small-up} { @content; }
+    }
+    @else if $point == medium {
+        @media #{$medium-only} { @content; }
+    }
+    @else if $point == medium-up {
+        @media #{$medium-up} { @content; }
+    }
+    @else if $point == medium-down {
+        @media #{$medium-down} { @content; }
+    }
+    @else if $point == large {
+        @media #{$large-only} { @content; }
+    }
+    @else if $point == large-up {
+        @media #{$large-up} { @content; }
+    }
+    @else if $point == xlarge {
+        @media #{$xlarge-only} { @content; }
+    }
+    @else if $point == xlarge-up {
+        @media #{$xlarge-up} { @content; }
+    }
+    @else if $point == xxlarge {
+        @media #{$xxlarge-only} { @content; }
+    }
+    @else if $point == xxlarge-up {
+        @media #{$xxlarge-up} { @content; }
+    }
+}   
+
+// a mixin for borwser support placeholder
+@mixin placeholder {
+    &::-webkit-input-placeholder {
+        @content;
+    }
+    &::-moz-placeholder {
+        @content;
+    }
+    &:-ms-input-placeholder {
+        @content;
+    }   
+    &:-moz-placeholder {
+        @content;
+    }
+}
+
+// We use this to add transitions to elements
+// $property - Default: all, Options: http://www.w3.org/TR/css3-transitions/#animatable-properties
+// $speed - Default: 300ms
+// $ease - Default:ease-out, Options: http://css-tricks.com/almanac/properties/t/transition-timing-function/
+@mixin transitions($property:all, $speed:300ms, $easing:ease-out, $delay:0ms) {
+    -webkit-transition: $property $speed $easing $delay;
+       -moz-transition: $property $speed $easing $delay;
+        -ms-transition: $property $speed $easing $delay;
+         -o-transition: $property $speed $easing $delay;
+            transition: $property $speed $easing $delay;
+}
+
+@mixin animations($name, $duration:1500ms, $easing:ease-out, $delay:0ms, $iteration:infinite, $direction: alternate, $fill-mode: none) {
+  -webkit-animation: $name $duration $easing $delay $iteration;
+     -moz-animation: $name $duration $easing $delay $iteration;
+       -o-animation: $name $duration $easing $delay $iteration;
+          animation: $name $duration $easing $delay $iteration;
+  -webkit-animation-direction: $direction;
+          animation-direction: $direction;
+  -webkit-animation-fill-mode: $fill-mode;
+          animation-fill-mode: $fill-mode;
+}
+        
+@mixin keyframes($name) {
+    @-webkit-keyframes #{$name} {
+        @content; 
+    }
+    @-moz-keyframes #{$name} {
+        @content;
+    }
+    @-ms-keyframes #{$name} {
+        @content;
+    }
+    @keyframes #{$name} {
+        @content;
+    } 
+}
+
+
+// Returns $value of selected $key
+// -------------------------------------------------------------------------------
+// @example
+//      $list: (key_1, val_1), (key_2, val_2), (key_3, val_3);
+//      list-key-value($list, key_2) => val_2
+// -------------------------------------------------------------------------------
+// @param $list [List] : list
+// @param $key [String] : $key of array
+// -------------------------------------------------------------------------------
+
+@function list-key-value($list, $key) {
+    @each $item in $list {
+        @if ($key == nth($item, 1)) {
+            @return nth($item, 2);
+        }
+    }
+}
+
+
+// Convert anythings to bool
+// -------------------------------------------------------------------------------
+// @documentation https://github.com/HugoGiraudel/SassyCast
+// -------------------------------------------------------------------------------
+// @example to-bool(false);                 => false
+// @example to-bool(0);                     => false
+// @example to-bool(null);                  => false
+// @example to-bool("");                    => false
+// @example to-bool(true);                  => true
+// @example to-bool(1);                     => true
+// @example to-bool(());                    => true
+// @example to-bool(string);                => true
+// @example to-bool("quoted string");       => true
+// @example to-bool(this is a list);        => true
+// @example to-bool((this: is a map));      => true
+// @example to-bool(1337);                  => true
+// @example to-bool(#000);                  => true
+// -------------------------------------------------------------------------------
+// @param $value
+// -------------------------------------------------------------------------------
+// @return [Bool]
+
+@function to-bool($value) {
+    @if not $value or $value == "" or $value == 0 {
+        @return false;
+    }
+    @return true;
+}
+
+
+// Returns $list as a string
+// -------------------------------------------------------------------------------
+// @documentation http://sassylists.com/documentation/#debug
+// -------------------------------------------------------------------------------
+// @example debug(a b c d e)   => [ a, b, c, d, e ]
+// @example debug(a b (c d e)) => [ a, b, [ c, d, e ] ]
+// -------------------------------------------------------------------------------
+// @param $list [List] : list
+// @param $pre [Boolean] : enable/disable variables type and proper indentation
+// @param $level [Number] : internal variable for recursivity
+// -------------------------------------------------------------------------------
+// @return [String]
+ 
+@function debug($list, $pre: false, $level: 1) {
+    $tab: "    ";
+    $indent: "";
+    $break: if($pre, "\A ", "");
+  
+    @if length($list) == 0 {
+        @return "( )";
+    }
+  
+    @if length($list) == 1 {
+        @return if($pre,  "(" + type-of($list) + ") ", "") + $list;
+    }
+ 
+    @for $i from 1 to $level {
+        $indent: $indent + $tab;
+    }
+ 
+    $result: "[" + $break;
+ 
+    @for $i from 1 through length($list) {
+        $item: nth($list, $i);
+        $result: $result + if($pre, $indent + $tab, " ");
+ 
+        @if length($item) > 1 {
+            $result: $result 
+                + if($pre, "(list: " + length($item) + ") ", "") 
+                + debug($item, $pre, $level + 1);
+        }
+ 
+        @else {
+            @if $pre {
+                $result: $result + "(" + type-of($item) + ") ";
+            }
+      
+            @if length($item) == 0 {
+                $result: $result + "( )";
+            }
+      
+            @else if type-of($item) == string {
+                $result: $result + quote($item);
+            }
+      
+            @else if $item == null {
+                $result: $result + "null";
+            }
+      
+            @else {
+                $result: $result + $item;
+            }
+        }
+    
+        @if $i != length($list) {
+            $result: $result + "," + $break;
+        }
+    }
+ 
+    $result: $result + $break + if($pre, if($level > 1, $indent, ""), " ") + "]";
+ 
+    @return quote($result);
+}
+ 
+// Mixin displaying clean debug
+// -------------------------------------------------------------------------------
+// @param $list [List] : list
+ 
+@mixin debug($list, $whitescreen: false) {
+    body {
+        &:before {
+            content: debug($list, true)              !important;
+
+            display: block                            !important;
+            margin: 1em                               !important;
+            padding: .5em                             !important; 
+
+            background: #EFEFEF                       !important;
+            border: 1px solid #DDD                    !important;
+            border-radius: .2em                       !important;
+
+            color: #333                               !important;
+            font: .75em/1.5 "Courier New", monospace  !important;
+            text-shadow: 0 1px white                  !important;
+            white-space: pre-wrap                     !important;
+        }
+        &:after {
+            display: block;
+            content: debug($list);
+        }
+        @if ($whitescreen) {
+            * {
+                display: none;
+            }
+        }
+    }
+}

@@ -117,3 +117,18 @@ gulp.task('vendor', function() {
     return gulp.src(mainBowerFiles(), { base: 'bower_components' })
         .pipe(gulp.dest('assets/vendor'))
 });
+
+/**
+ * Copy Foundation Setting File from vendor to assets/scss/settings.
+ */
+gulp.task('fnsetting', function() {
+  var fs = require('fs');
+  if (fs.existsSync('./assets/scss/settings/_foundation-settings.scss')) {
+    console.log('Foundation Settings File Exist!')
+  } else {
+    console.log('Copy Foundation Settings File to Settings Folder.');
+	gulp.src("./assets/vendor/foundation/scss/foundation/_settings.scss")
+		.pipe(rename('_foundation-settings.scss'))
+		.pipe(gulp.dest('./assets/scss/settings'));
+  }
+});
