@@ -15,5 +15,21 @@
   "dependencies": {
     "foundation": "^5.4.7",
     "fontawesome": "^4.2.0"
+  },
+  "overrides": {
+      "foundation": {
+		"dependencies": null,
+		"main": ["js/**/*", "scss/**/*"]
+      },
+      "sass-direction-controller": {
+		"main": "sass/_direction-controller.scss"
+      },
+      "imagesloaded": {
+		"dependencies": null,
+		"main": ["imagesloaded.pkgd.js", "imagesloaded.pkgd.min.js"]
+      },
+      "fontawesome": {
+		"main": ["scss/*", "fonts/*"]
+      }
   }
 }

@@ -12,6 +12,7 @@ var rename = require('gulp-rename');
 var minifyCSS = require('gulp-minify-css');
 var cp = require('child_process');
 var browserSync = require('browser-sync');
+var mainBowerFiles = require('main-bower-files');
 var loadjekyll  = process.platform === "win32" ? "jekyll.bat" : "jekyll";
 
 var messages = {
@@ -108,3 +109,11 @@ gulp.task('watch', function () {
  * compile the jekyll site, launch BrowserSync & watch files.
  */
 gulp.task('default', ['browser-sync', 'watch']);
+
+/**
+ * Copy Main Files from bower_components to assets/vendor folder.
+ */
+gulp.task('vendor', function() {
+    return gulp.src(mainBowerFiles(), { base: 'bower_components' })
+        .pipe(gulp.dest('assets/vendor'))
+});
