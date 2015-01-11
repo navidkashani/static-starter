@@ -23,10 +23,17 @@ var messages = {
  * Create List of JS,CSS and Export File
  */
 var JsFileList = [
-    './assets/vendor/bower-webfontloader/webfont.js',
-    './assets/js/app.js'
+    './app/assets/js/app.js'
 ];
 
+var vendor = {
+  js: [
+    './app/assets/js/app.js'
+  ],
+  css: [
+    'paths/to/your/css/files.css'
+  ]
+}
 
 /**
  * Gulp Tasks
@@ -56,7 +63,7 @@ gulp.task('jekyll-rebuild', ['jekyll-build'], function () {
 gulp.task('browser-sync', ['sass', 'js', 'jekyll-build'], function() {
     browserSync({
         server: {
-            baseDir: '_site'
+            baseDir: 'dist'
         }
     });
 });
@@ -65,21 +72,13 @@ gulp.task('browser-sync', ['sass', 'js', 'jekyll-build'], function() {
  * Compile files from _scss into both _site/css (for live injecting) and site (for future jekyll builds)
  */
 gulp.task('sass', function () {
-    return gulp.src('assets/scss/style.scss')
+    return gulp.src('app/assets/scss/style.scss')
         .pipe(sass({
             includePaths: ['scss'],
             onError: browserSync.notify
         }))
 		//.pipe(minifyCSS())
-        .pipe(gulp.dest('assets/css'));
-});
-
-/**
- * Copy font awesome file from assets/vendor to assets/fonts.
- */
-gulp.task('font', function() {
-  gulp.src('assets/vendor/fontawesome/fonts/fontawesome-webfont.woff')
-    .pipe(gulp.dest('assets/font'))
+        .pipe(gulp.dest('app/assets/css'));
 });
 
 /**
@@ -88,10 +87,10 @@ gulp.task('font', function() {
 gulp.task('js', function() {
   gulp.src(JsFileList)
     .pipe(concat('all.js'))
-    .pipe(gulp.dest('assets/js'))
+    .pipe(gulp.dest('app/assets/js'))
     .pipe(rename('all.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('assets/js'))
+    .pipe(gulp.dest('app/assets/js'))
 });
 
 /**
@@ -99,9 +98,9 @@ gulp.task('js', function() {
  * Watch html/md files, run jekyll & reload BrowserSync
  */
 gulp.task('watch', function () {
-    gulp.watch('./assets/scss/**/*.scss', ['sass', 'jekyll-rebuild']);
+    gulp.watch('./app/assets/scss/**/*.scss', ['sass', 'jekyll-rebuild']);
     gulp.watch(['index.html', '_layouts/*.html', '_posts/*', 'blog/index.html', 'about/*.md'], ['jekyll-rebuild']);
-    gulp.watch('assets/js/app.js', ['js', 'jekyll-rebuild']);
+    gulp.watch('app/assets/js/app.js', ['js', 'jekyll-rebuild']);
 });
 
 /**
