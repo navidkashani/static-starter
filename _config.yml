@@ -1,3 +1,9 @@
+# Where things are
+source:      ./app
+destination: ./dist
+exclude:     ["assets/*.md"]
+include:     ["*.scss"]
+
 # Site settings
 title: Your awesome title
 email: your-email@domain.com
