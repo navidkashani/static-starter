@@ -15,17 +15,16 @@ var browserSync = require('browser-sync');
 var mainBowerFiles = require('main-bower-files');
 var loadjekyll  = process.platform === "win32" ? "jekyll.bat" : "jekyll";
 
-var vendor  = require('gulp/vendor').vendor;
+var vendor  = require('./gulp/vendor').vendor;
 
 var messages = {
-    jekyllBuild: '<span style="color: grey">Shadia3! it\'s Running:</span> $ jekyll build'
+    jekyllBuild: '<span style="color: grey">Running:</span> $ jekyll build'
 };
 
 /**
  * Gulp Tasks
  */
- 
- 
+
 /**
  * Build the Jekyll Site
  */
@@ -85,8 +84,8 @@ gulp.task('js', function() {
  */
 gulp.task('watch', function () {
     gulp.watch('./app/assets/scss/**/*.scss', ['sass', 'jekyll-rebuild']);
-    gulp.watch(['index.html', '_layouts/*.html', '_posts/*', 'blog/index.html', 'about/*.md'], ['jekyll-rebuild']);
-    gulp.watch('app/assets/js/*.js', ['js', 'jekyll-rebuild']);
+    gulp.watch(['./app/**/*.{html,markdown,md}', '!./app/assets/**/*'], ['jekyll-rebuild']);
+    gulp.watch('app/assets/js/app.js', ['js', 'jekyll-rebuild']);
 });
 
 /**
