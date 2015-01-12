@@ -13,13 +13,17 @@ var minifyCSS = require('gulp-minify-css');
 var cp = require('child_process');
 var browserSync = require('browser-sync');
 var mainBowerFiles = require('main-bower-files');
-var loadjekyll  = process.platform === "win32" ? "jekyll.bat" : "jekyll";
+var loadjekyll  = process.platform === 'win32' ? 'jekyll.bat' : 'jekyll';
 
 var vendor  = require('./gulp/vendor').vendor;
 
 var messages = {
     jekyllBuild: '<span style="color: grey">Running:</span> $ jekyll build'
 };
+
+// Directories
+var appURL = 'app'
+var assetsURL = appURL + '/assets';
 
 /**
  * Gulp Tasks
@@ -57,13 +61,13 @@ gulp.task('browser-sync', ['sass', 'js', 'jekyll:build'], function() {
  * Compile files from _scss into both _site/css (for live injecting) and site (for future jekyll builds)
  */
 gulp.task('sass', function () {
-    return gulp.src('app/assets/scss/style.scss')
+    return gulp.src(assetsURL + '/scss/style.scss')
         .pipe(sass({
             includePaths: ['scss'],
             onError: browserSync.notify
         }))
 		//.pipe(minifyCSS())
-        .pipe(gulp.dest('app/assets/css'));
+        .pipe(gulp.dest(assetsURL + '/css'));
 });
 
 /**
@@ -72,10 +76,10 @@ gulp.task('sass', function () {
 gulp.task('js', function() {
   gulp.src(vendor.js)
     .pipe(concat('all.js'))
-    .pipe(gulp.dest('app/assets/js'))
+    .pipe(gulp.dest(assetsURL + '/js'))
     .pipe(rename('all.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest('app/assets/js'))
+    .pipe(gulp.dest(assetsURL + '/js'))
 });
 
 /**
@@ -83,9 +87,9 @@ gulp.task('js', function() {
  * Watch html/md files, run jekyll & reload BrowserSync
  */
 gulp.task('watch', function () {
-    gulp.watch('./app/assets/scss/**/*.scss', ['sass', 'jekyll:rebuild']);
-    gulp.watch(['./app/**/*.{html,markdown,md}', '!./app/assets/**/*'], ['jekyll:rebuild']);
-    gulp.watch('app/assets/js/app.js', ['js', 'jekyll:rebuild']);
+    gulp.watch(assetsURL + '/scss/**/*.scss', ['sass', 'jekyll:rebuild']);
+    gulp.watch([appURL + '/**/*.{html,markdown,md}', '!' + assetsURL + '/**/*'], ['jekyll:rebuild']);
+    gulp.watch(assetsURL + '/js/app.js', ['js', 'jekyll:rebuild']);
 });
 
 /**
@@ -99,7 +103,7 @@ gulp.task('default', ['browser-sync', 'watch']);
  */
 gulp.task('vendor', function() {
     return gulp.src(mainBowerFiles(), { base: 'bower_components' })
-        .pipe(gulp.dest('app/assets/vendor'))
+        .pipe(gulp.dest(assetsURL + '/vendor'))
 });
 
 /**
@@ -107,13 +111,13 @@ gulp.task('vendor', function() {
  */
 gulp.task('copy:foundation', function() {
   var fs = require('fs');
-  if (fs.existsSync('./app/assets/scss/settings/_foundation-settings.scss')) {
+  if (fs.existsSync(assetsURL + '/scss/settings/_foundation-settings.scss')) {
     console.log('Foundation Settings File Exist!')
   } else {
     console.log('Copy Foundation Settings File to Settings Folder.');
-	gulp.src("./app/assets/vendor/foundation/scss/foundation/_settings.scss")
+	gulp.src(assetsURL + '/vendor/foundation/scss/foundation/_settings.scss')
 		.pipe(rename('_foundation-settings.scss'))
-		.pipe(gulp.dest('./app/assets/scss/settings'));
+		.pipe(gulp.dest(assetsURL + '/scss/settings'));
   }
 });
 
