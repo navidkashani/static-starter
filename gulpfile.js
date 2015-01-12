@@ -28,7 +28,7 @@ var messages = {
 /**
  * Build the Jekyll Site
  */
-gulp.task('jekyll-build', function (done) {
+gulp.task('jekyll:build', function (done) {
     browserSync.notify(messages.jekyllBuild);
     return cp.spawn(loadjekyll, ['build'], {stdio: 'inherit'})
         .on('close', done);
@@ -37,15 +37,15 @@ gulp.task('jekyll-build', function (done) {
 /**
  * Rebuild Jekyll & do page reload
  */
-gulp.task('jekyll-rebuild', ['jekyll-build'], function () {
+gulp.task('jekyll:rebuild', ['jekyll:build'], function () {
     browserSync.reload();
 });
 
 
 /**
- * Wait for jekyll-build, then launch the Server
+ * Wait for jekyll:build, then launch the Server
  */
-gulp.task('browser-sync', ['sass', 'js', 'jekyll-build'], function() {
+gulp.task('browser-sync', ['sass', 'js', 'jekyll:build'], function() {
     browserSync({
         server: {
             baseDir: 'dist'
@@ -83,9 +83,9 @@ gulp.task('js', function() {
  * Watch html/md files, run jekyll & reload BrowserSync
  */
 gulp.task('watch', function () {
-    gulp.watch('./app/assets/scss/**/*.scss', ['sass', 'jekyll-rebuild']);
-    gulp.watch(['./app/**/*.{html,markdown,md}', '!./app/assets/**/*'], ['jekyll-rebuild']);
-    gulp.watch('app/assets/js/app.js', ['js', 'jekyll-rebuild']);
+    gulp.watch('./app/assets/scss/**/*.scss', ['sass', 'jekyll:rebuild']);
+    gulp.watch(['./app/**/*.{html,markdown,md}', '!./app/assets/**/*'], ['jekyll:rebuild']);
+    gulp.watch('app/assets/js/app.js', ['js', 'jekyll:rebuild']);
 });
 
 /**
