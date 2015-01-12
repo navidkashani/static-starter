@@ -106,7 +106,7 @@ gulp.task('vendor', function() {
 /**
  * Copy Foundation Setting File from vendor to assets/scss/settings.
  */
-gulp.task('fnsetting', function() {
+gulp.task('copy:foundation', function() {
   var fs = require('fs');
   if (fs.existsSync('./app/assets/scss/settings/_foundation-settings.scss')) {
     console.log('Foundation Settings File Exist!')
@@ -121,4 +121,4 @@ gulp.task('fnsetting', function() {
 /**
  * Start Your New Project with this task (only once).
  */
-gulp.task('start', ['vendor', 'fnsetting', 'default']);
+gulp.task('start', ['vendor', 'copy:foundation', 'default']);
