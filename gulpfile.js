@@ -15,25 +15,11 @@ var browserSync = require('browser-sync');
 var mainBowerFiles = require('main-bower-files');
 var loadjekyll  = process.platform === "win32" ? "jekyll.bat" : "jekyll";
 
+var vendor  = require('gulp/vendor').vendor;
+
 var messages = {
     jekyllBuild: '<span style="color: grey">Shadia3! it\'s Running:</span> $ jekyll build'
 };
-
-/*
- * Create List of JS,CSS and Export File
- */
-var JsFileList = [
-    './app/assets/js/app.js'
-];
-
-var vendor = {
-  js: [
-    './app/assets/js/app.js'
-  ],
-  css: [
-    'paths/to/your/css/files.css'
-  ]
-}
 
 /**
  * Gulp Tasks
@@ -85,7 +71,7 @@ gulp.task('sass', function () {
  * concatenate and minify JS files and save it to assets/js folder.
  */
 gulp.task('js', function() {
-  gulp.src(JsFileList)
+  gulp.src(vendor.js)
     .pipe(concat('all.js'))
     .pipe(gulp.dest('app/assets/js'))
     .pipe(rename('all.min.js'))
@@ -100,7 +86,7 @@ gulp.task('js', function() {
 gulp.task('watch', function () {
     gulp.watch('./app/assets/scss/**/*.scss', ['sass', 'jekyll-rebuild']);
     gulp.watch(['index.html', '_layouts/*.html', '_posts/*', 'blog/index.html', 'about/*.md'], ['jekyll-rebuild']);
-    gulp.watch('app/assets/js/app.js', ['js', 'jekyll-rebuild']);
+    gulp.watch('app/assets/js/*.js', ['js', 'jekyll-rebuild']);
 });
 
 /**

@@ -8,6 +8,11 @@ backup
 _site
 dist
 
+app/assets/js/all.js
+app/assets/js/all.min.js
+
+app/assets/css/style.css
+
 
 *.log
 logs
