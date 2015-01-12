@@ -117,3 +117,8 @@ gulp.task('fnsetting', function() {
 		.pipe(gulp.dest('./app/assets/scss/settings'));
   }
 });
+
+/**
+ * Start Your New Project with this task (only once).
+ */
+gulp.task('start', ['vendor', 'fnsetting', 'default']);
