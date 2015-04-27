@@ -64,6 +64,7 @@ gulp.task('sass', function () {
     return gulp.src(assetsURL + '/scss/style.scss')
         .pipe(sass({
             includePaths: ['scss'],
+			errLogToConsole: true,
             onError: browserSync.notify
         }))
 		//.pipe(minifyCSS())
