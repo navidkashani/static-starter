@@ -1,6 +1,5 @@
 {
   "name": "static-starter",
-  "version": "0.1.0",
   "homepage": "http://reyhoun.com",
   "authors": [
     "Reyhoun Team <info@reyhoun.com>"
@@ -13,17 +12,12 @@
     "bower_components"
   ],
   "dependencies": {
-    "foundation": "^5.4.7",
-    "sass-direction-controller": "^1.0.2",
-    "fontawesome": "^4.2.0"
+    "foundation": "^5.5.1"
   },
   "overrides": {
       "foundation": {
 		"dependencies": null,
 		"main": ["js/**/*", "scss/**/*"]
-      },
-      "fontawesome": {
-		"main": ["scss/*", "fonts/*"]
       }
   }
 }
